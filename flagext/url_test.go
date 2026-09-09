@@ -87,3 +87,16 @@ func TestURLValueYAML(t *testing.T) {
 		assert.Equal(t, expected, actual)
 	}
 }
+
+func Test_URLValue_SetInvalid(tt *testing.T) {
+	for _, tcase := range []struct {
+		input string
+	}{
+		{":"}, // Only protocol separators, no host
+		{"://"}, // Invalid (missing protocol scheme)
+	} {
+		var u URLValue
+		err := u.Set(tcase.input)
+		assert.Error(tt, err, "input %q should fail", tcase.input)
+	}
+}

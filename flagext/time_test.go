@@ -78,3 +78,24 @@ func mustParseTime(t *testing.T, f, s string) time.Time {
 	}
 	return ts
 }
+
+func Test_Time_SetInvalid(tt *testing.T) {
+	for _, tcase := range []struct {
+		input string
+	}{
+		{"invalid"},
+		{"abc"},
+		{"2023-13-01"}, // Invalid month
+		{"2023-01-32"}, // Invalid day
+		{"2023-01-00"}, // Invalid day
+		{"2023-02-29"}, // Not a leap year
+		{""}, // Empty string
+		{"2023-01-01 12:34"}, // Wrong separator (space not T)
+		{"2023/01/01"}, // Wrong format separator
+		{"not-a-time"}, // Invalid format
+	} {
+		var timeValue Time
+		err := timeValue.Set(tcase.input)
+		assert.Error(tt, err, "input %q should fail", tcase.input)
+	}
+}

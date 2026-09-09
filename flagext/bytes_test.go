@@ -166,3 +166,21 @@ func Test_Bytes_UnmarshalYAML(t *testing.T) {
 		require.Equal(t, Bytes(tcase.expected), b)
 	}
 }
+
+func Test_Bytes_SetInvalid(t *testing.T) {
+	for _, tcase := range []struct {
+		input string
+	}{
+		{"invalid"},
+		{"abc"},
+		{"1.5GB2"},
+		{"GB"},
+		{"2GIB"},
+		{"1GG"},
+		{"abcGiB"},
+	} {
+		var b Bytes
+		err := b.Set(tcase.input)
+		require.Error(t, err, "input %q should fail", tcase.input)
+	}
+}

@@ -50,3 +50,22 @@ func TestDayValueYAML(t *testing.T) {
 		assert.Equal(t, testStruct, actualStruct)
 	})
 }
+
+func Test_DayValue_SetInvalid(t *testing.T) {
+	for _, tcase := range []struct {
+		input string
+	}{
+		{"invalid"},
+		{"abc"},
+		{"2023-13-01"}, // Invalid month
+		{"2023-00-01"}, // Invalid month
+		{"2023-01-32"}, // Invalid day
+		{"2023-01-00"}, // Invalid day
+		{"2023-02-29"}, // Not a leap year (2023 is not leap)
+		{""}, // Empty string
+	} {
+		var d DayValue
+		err := d.Set(tcase.input)
+		assert.Error(t, err, "input %q should fail", tcase.input)
+	}
+}
